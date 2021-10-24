@@ -4,6 +4,7 @@
 #include <time.h>
 #include <string.h>
 #define fishcount 20
+#define x2count 5
 
 #define screen_x 90
 #define screen_y 30
@@ -11,17 +12,17 @@ HANDLE wHnd;
 HANDLE rHnd;
 DWORD fdwMode;
 CHAR_INFO consoleBuffer[screen_x * screen_y];
-COORD bufferSize = {screen_x  ,screen_y };
+COORD bufferSize = { screen_x  ,screen_y };
 COORD characterPos = { 0,0 };
 SMALL_RECT windowSize = { 0,0,101 - 1,screen_y - 1 };
-DWORD aj = 7;
-struct ocean 
+struct ocean
 {
 	bool active = true;
 	int x = 0;
 	int y = 0;
 };
 ocean fish[fishcount];
+ocean x2[x2count];
 char cursor(int x, int y)
 {
 	HANDLE hStd = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -81,8 +82,8 @@ void draw_hook(int x, int y)
 	COORD c = { x, y };
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
 	consoleBuffer[c.X + screen_x * c.Y].Char.AsciiChar = '|';
-	consoleBuffer[c.X + screen_x * (c.Y+1)].Char.AsciiChar = '|';
-	consoleBuffer[c.X + screen_x * (c.Y+2)].Char.AsciiChar = 'V';
+	consoleBuffer[c.X + screen_x * (c.Y + 1)].Char.AsciiChar = '|';
+	consoleBuffer[c.X + screen_x * (c.Y + 2)].Char.AsciiChar = 'V';
 
 	consoleBuffer[c.X + screen_x * c.Y].Attributes = 7;
 	consoleBuffer[c.X + screen_x * (c.Y + 1)].Attributes = 7;
@@ -97,12 +98,44 @@ void init_fish()
 		fish[i].x = rand() % screen_x;
 	}
 }
+void init_x2()
+{
+	for (int i = 0; i < x2count; i++)
+	{
+		x2[i].y = rand() % screen_y + 8;
+		x2[i].x = rand() % screen_x;
+	}
+}
+void x2_move()
+{
+	for (int i = 0; i < x2count; i++) {
+		if (x2[i].x >= screen_x) {
+			x2[i].y = ((rand() % screen_y) + 8);
+			x2[i].x = 0;
+			x2[i].active = true;
+		}
+		else {
+			x2[i].x = x2[i].x + 1;
+			x2[i].y = x2[i].y;
+		}
+	}
+}
+void fill_x2_to_buffer()
+{
+	for (int i = 0; i < fishcount; ++i) {
+		consoleBuffer[(x2[i].x) + screen_x * x2[i].y].Char.AsciiChar = 'x';
+		consoleBuffer[(x2[i].x + 1) + screen_x * x2[i].y].Char.AsciiChar = '2';
+		consoleBuffer[(x2[i].x) + screen_x * x2[i].y].Attributes = 7;
+		consoleBuffer[(x2[i].x + 1) + screen_x * x2[i].y].Attributes = 7;
+	}
+}
 void fish_move()
 {
 	for (int i = 0; i < fishcount; i++) {
 		if (fish[i].x >= screen_x) {
 			fish[i].y = ((rand() % screen_y) + 8);
 			fish[i].x = 0;
+			fish[i].active = true;
 		}
 		else {
 			fish[i].x = fish[i].x + 1;
@@ -116,9 +149,35 @@ void fill_fish_to_buffer()
 		consoleBuffer[(fish[i].x) + screen_x * fish[i].y].Char.AsciiChar = '>';
 		consoleBuffer[(fish[i].x + 1) + screen_x * fish[i].y].Char.AsciiChar = 'O';
 		consoleBuffer[(fish[i].x + 2) + screen_x * fish[i].y].Char.AsciiChar = 'D';
-		consoleBuffer[fish[i].x + screen_x * fish[i].y].Attributes = aj;
-		consoleBuffer[(fish[i].x + 1) + screen_x * fish[i].y].Attributes = aj;
-		consoleBuffer[(fish[i].x + 2) + screen_x * fish[i].y].Attributes = aj;
+		consoleBuffer[(fish[i].x) + screen_x * fish[i].y].Attributes = 7;
+		consoleBuffer[(fish[i].x + 1) + screen_x * fish[i].y].Attributes = 7;
+		consoleBuffer[(fish[i].x + 2) + screen_x * fish[i].y].Attributes = 7;
+	}
+}
+void del_fish_to_buffer()
+{
+	for (int i = 0; i < fishcount; ++i) {
+		if (fish[i].active == false)
+		{
+			consoleBuffer[(fish[i].x) + screen_x * fish[i].y].Char.AsciiChar = '>';
+			consoleBuffer[(fish[i].x + 1) + screen_x * fish[i].y].Char.AsciiChar = 'O';
+			consoleBuffer[(fish[i].x + 2) + screen_x * fish[i].y].Char.AsciiChar = 'D';
+			consoleBuffer[(fish[i].x) + screen_x * fish[i].y].Attributes = 0;
+			consoleBuffer[(fish[i].x + 1) + screen_x * fish[i].y].Attributes = 0;
+			consoleBuffer[(fish[i].x + 2) + screen_x * fish[i].y].Attributes = 0;
+		}
+	}
+}
+void del_x2_to_buffer()
+{
+	for (int i = 0; i < fishcount; ++i) {
+		if (x2[i].active == false)
+		{
+			consoleBuffer[(x2[i].x) + screen_x * x2[i].y].Char.AsciiChar = 'x';
+			consoleBuffer[(x2[i].x + 1) + screen_x * x2[i].y].Char.AsciiChar = '2';
+			consoleBuffer[(x2[i].x) + screen_x * x2[i].y].Attributes = 0;
+			consoleBuffer[(x2[i].x + 1) + screen_x * x2[i].y].Attributes = 0;
+		}
 	}
 }
 int setMode()
@@ -143,24 +202,34 @@ void draw_score(int x, int y, int score)
 	setcolor(7, 0);
 	printf("score : %d", score);
 }
+void draw_bait(int x, int y, int bait)
+{
+	COORD c = { x, y };
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
+	setcolor(7, 0);
+	printf("baits : %d ", bait);
+}
 int main()
 {
 	int score = 0;
+	int bait = 20;
 	srand(time(NULL));
 	bool play = true;
 	setConsole(screen_x, screen_y);
 	int x = 2, y = 2, d = 0;
-	int xh = 2, yh = 2, dh = 0;
+	int xh = 5, yh = 2, dh = 0;
 	DWORD numEvents = 0;
 	DWORD numEventsRead = 0;
 	setcursor(0);
 	init_fish();
+	init_x2();
 	setMode();
 	while (play)
 	{
-		aj = 7;
 		fish_move();
-		draw_score(90,1,score);
+		x2_move();
+		draw_score(90, 1, score);
+		draw_bait(90, 2, bait);
 		clear_buffer();
 		GetNumberOfConsoleInputEvents(rHnd, &numEvents);
 		if (numEvents != 0) {
@@ -183,28 +252,55 @@ int main()
 					}
 					if (eventBuffer[i].Event.KeyEvent.uChar.AsciiChar == ' ') {
 						dh = 1;
-						d = 0;
+						bait -= 1;
 					}
 				}
 			}
 		}
-		if (d == -1 && (x - 2) >= 1) { draw_ship(--x, y); draw_hook(--xh + 3, yh);}
-		if (d == 1 && (x + 2) <= 90) { draw_ship(++x, y); draw_hook(++xh + 3, yh);}
-		if (d == 0) { draw_ship(x, y); draw_hook(xh + 3, yh);}
-		if (dh == 1 && (yh + 2) < screen_y) {
-			if ((cursor(xh + 3, yh + 2)) == 'D' || (cursor(xh + 3, yh + 2)) == 'O' || (cursor(xh + 3, yh +2)) == '>')
-			{
-				score += 1;
-				yh = 2;
-				dh = 0;
-			}
-			else
-			{
-				draw_ship(x, y); draw_hook(xh + 3, ++yh);
-			}
+		if (dh == 1 && yh < screen_y && d == 0)
+		{
+				if ((cursor(xh, yh + 2) == '>' || cursor(xh, yh + 2) == 'O' || cursor(xh, yh + 2) == 'D'))
+				{
+					for (int i = 0; i < fishcount; i++)
+					{
+						if ((xh == fish[i].x - 1 || xh == fish[i].x || xh == fish[i].x + 1 || xh == fish[i].x + 2) && yh + 2 == fish[i].y)
+						{
+							fish[i].active = false;
+						}
+					}
+					score += 1;
+					yh = 2;
+					dh = 0;
+				}
+				else if (cursor(xh, yh + 2) == 'x' || cursor(xh, yh + 2) == '2')
+				{
+					for (int i = 0; i < x2count; i++)
+					{
+						if ((xh == x2[i].x - 1 || xh == x2[i].x || xh == x2[i].x + 1 || xh == x2[i].x + 2) && yh + 2 == x2[i].y)
+						{
+							x2[i].active = false;
+						}
+					}
+					score *= 2;
+					yh = 2;
+					dh = 0;
+				}
+				else
+				{
+					draw_ship(x, y); draw_hook(xh, ++yh);
+				}
 		}
 		else { yh = 2; dh = 0; }
+		if (d == -1 && (x - 2) >= 1) { draw_ship(--x, y); draw_hook(--xh, yh); }
+		else { draw_ship(x, y); draw_hook(xh, yh); }
+		if (d == 1 && (x + 2) <= 87) { draw_ship(++x, y); draw_hook(++xh, yh); }
+		else { draw_ship(x, y); draw_hook(xh, yh); }
+		if (d == 0) { draw_ship(x, y); draw_hook(xh, yh); }
+		if (bait < 0) { play = false; }
+		fill_x2_to_buffer();
+		del_x2_to_buffer();
 		fill_fish_to_buffer();
+		del_fish_to_buffer();
 		fill_buffer_to_console();
 		Sleep(50);
 	}
