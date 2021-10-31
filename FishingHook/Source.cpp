@@ -5,6 +5,7 @@
 #include <string.h>
 #define fishcount 20
 #define x2count 5
+#define betcount 1
 
 #define screen_x 90
 #define screen_y 30
@@ -23,6 +24,7 @@ struct ocean
 };
 ocean fish[fishcount];
 ocean x2[x2count];
+ocean bet[betcount];
 char cursor(int x, int y)
 {
 	HANDLE hStd = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -90,43 +92,15 @@ void draw_hook(int x, int y)
 	consoleBuffer[c.X + screen_x * (c.Y + 2)].Attributes = 7;
 
 }
+
+
+
 void init_fish()
 {
 	for (int i = 0; i < fishcount; i++)
 	{
 		fish[i].y = rand() % screen_y + 8;
 		fish[i].x = rand() % screen_x;
-	}
-}
-void init_x2()
-{
-	for (int i = 0; i < x2count; i++)
-	{
-		x2[i].y = rand() % screen_y + 8;
-		x2[i].x = rand() % screen_x;
-	}
-}
-void x2_move()
-{
-	for (int i = 0; i < x2count; i++) {
-		if (x2[i].x >= screen_x) {
-			x2[i].y = ((rand() % screen_y) + 8);
-			x2[i].x = 0;
-			x2[i].active = true;
-		}
-		else {
-			x2[i].x = x2[i].x + 1;
-			x2[i].y = x2[i].y;
-		}
-	}
-}
-void fill_x2_to_buffer()
-{
-	for (int i = 0; i < fishcount; ++i) {
-		consoleBuffer[(x2[i].x) + screen_x * x2[i].y].Char.AsciiChar = 'x';
-		consoleBuffer[(x2[i].x + 1) + screen_x * x2[i].y].Char.AsciiChar = '2';
-		consoleBuffer[(x2[i].x) + screen_x * x2[i].y].Attributes = 7;
-		consoleBuffer[(x2[i].x + 1) + screen_x * x2[i].y].Attributes = 7;
 	}
 }
 void fish_move()
@@ -168,9 +142,41 @@ void del_fish_to_buffer()
 		}
 	}
 }
+
+void init_x2()
+{
+	for (int i = 0; i < x2count; i++)
+	{
+		x2[i].y = rand() % screen_y + 8;
+		x2[i].x = rand() % screen_x;
+	}
+}
+void x2_move()
+{
+	for (int i = 0; i < x2count; i++) {
+		if (x2[i].x >= screen_x) {
+			x2[i].y = ((rand() % screen_y) + 8);
+			x2[i].x = 0;
+			x2[i].active = true;
+		}
+		else {
+			x2[i].x = x2[i].x + 1;
+			x2[i].y = x2[i].y;
+		}
+	}
+}
+void fill_x2_to_buffer()
+{
+	for (int i = 0; i < x2count; ++i) {
+		consoleBuffer[(x2[i].x) + screen_x * x2[i].y].Char.AsciiChar = 'x';
+		consoleBuffer[(x2[i].x + 1) + screen_x * x2[i].y].Char.AsciiChar = '2';
+		consoleBuffer[(x2[i].x) + screen_x * x2[i].y].Attributes = 7;
+		consoleBuffer[(x2[i].x + 1) + screen_x * x2[i].y].Attributes = 7;
+	}
+}
 void del_x2_to_buffer()
 {
-	for (int i = 0; i < fishcount; ++i) {
+	for (int i = 0; i < x2count; ++i) {
 		if (x2[i].active == false)
 		{
 			consoleBuffer[(x2[i].x) + screen_x * x2[i].y].Char.AsciiChar = 'x';
@@ -180,6 +186,90 @@ void del_x2_to_buffer()
 		}
 	}
 }
+
+void init_bet()
+{
+	for (int i = 0; i < betcount; i++)
+	{
+		bet[i].y = rand() % screen_y + 8;
+		bet[i].x = rand() % screen_x;
+	}
+}
+void bet_move()
+{
+	for (int i = 0; i < betcount; i++) {
+		if (bet[i].x >= screen_x) {
+			bet[i].y = ((rand() % screen_y) + 8);
+			bet[i].x = 0;
+			bet[i].active = true;
+		}
+		else {
+			bet[i].x = bet[i].x + 1;
+			bet[i].y = bet[i].y;
+		}
+	}
+}
+void fill_bet_to_buffer()
+{
+	for (int i = 0; i < betcount; ++i) {
+		consoleBuffer[(bet[i].x) + screen_x * bet[i].y].Char.AsciiChar = '-';
+		consoleBuffer[(bet[i].x + 1) + screen_x * bet[i].y].Char.AsciiChar = '-';
+		consoleBuffer[(bet[i].x + 2) + screen_x * bet[i].y].Char.AsciiChar = 'B';
+
+		consoleBuffer[(bet[i].x + 3) + screen_x * bet[i].y].Char.AsciiChar = '-';
+		consoleBuffer[(bet[i].x + 4) + screen_x * bet[i].y].Char.AsciiChar = '-';
+		consoleBuffer[(bet[i].x + 5) + screen_x * bet[i].y].Char.AsciiChar = 'B';
+
+		consoleBuffer[(bet[i].x + 6) + screen_x * bet[i].y].Char.AsciiChar = '-';
+		consoleBuffer[(bet[i].x + 7) + screen_x * bet[i].y].Char.AsciiChar = '-';
+		consoleBuffer[(bet[i].x + 8) + screen_x * bet[i].y].Char.AsciiChar = 'B';
+
+		consoleBuffer[(bet[i].x) + screen_x * bet[i].y].Attributes = 7;
+		consoleBuffer[(bet[i].x + 1) + screen_x * bet[i].y].Attributes = 7;
+		consoleBuffer[(bet[i].x + 2) + screen_x * bet[i].y].Attributes = 7;
+
+		consoleBuffer[(bet[i].x + 3) + screen_x * bet[i].y].Attributes = 7;
+		consoleBuffer[(bet[i].x + 4) + screen_x * bet[i].y].Attributes = 7;
+		consoleBuffer[(bet[i].x + 5) + screen_x * bet[i].y].Attributes = 7;
+
+		consoleBuffer[(bet[i].x + 6) + screen_x * bet[i].y].Attributes = 7;
+		consoleBuffer[(bet[i].x + 7) + screen_x * bet[i].y].Attributes = 7;
+		consoleBuffer[(bet[i].x + 8) + screen_x * bet[i].y].Attributes = 7;
+	}
+}
+
+void del_bet_to_buffer()
+{
+	for (int i = 0; i < betcount; ++i) {
+		if (bet[i].active == false)
+		{
+			consoleBuffer[(bet[i].x) + screen_x * bet[i].y].Char.AsciiChar = '-';
+			consoleBuffer[(bet[i].x + 1) + screen_x * bet[i].y].Char.AsciiChar = '-';
+			consoleBuffer[(bet[i].x + 2) + screen_x * bet[i].y].Char.AsciiChar = 'B';
+
+			consoleBuffer[(bet[i].x + 3) + screen_x * bet[i].y].Char.AsciiChar = '-';
+			consoleBuffer[(bet[i].x + 4) + screen_x * bet[i].y].Char.AsciiChar = '-';
+			consoleBuffer[(bet[i].x + 5) + screen_x * bet[i].y].Char.AsciiChar = 'B';
+
+			consoleBuffer[(bet[i].x + 6) + screen_x * bet[i].y].Char.AsciiChar = '-';
+			consoleBuffer[(bet[i].x + 7) + screen_x * bet[i].y].Char.AsciiChar = '-';
+			consoleBuffer[(bet[i].x + 8) + screen_x * bet[i].y].Char.AsciiChar = 'B';
+
+			consoleBuffer[(bet[i].x) + screen_x * bet[i].y].Attributes = 0;
+			consoleBuffer[(bet[i].x + 1) + screen_x * bet[i].y].Attributes = 0;
+			consoleBuffer[(bet[i].x + 2) + screen_x * bet[i].y].Attributes = 0;
+
+			consoleBuffer[(bet[i].x + 3) + screen_x * bet[i].y].Attributes = 0;
+			consoleBuffer[(bet[i].x + 4) + screen_x * bet[i].y].Attributes = 0;
+			consoleBuffer[(bet[i].x + 5) + screen_x * bet[i].y].Attributes = 0;
+
+			consoleBuffer[(bet[i].x + 6) + screen_x * bet[i].y].Attributes = 0;
+			consoleBuffer[(bet[i].x + 7) + screen_x * bet[i].y].Attributes = 0;
+			consoleBuffer[(bet[i].x + 8) + screen_x * bet[i].y].Attributes = 0;
+		}
+	}
+}
+
 int setMode()
 {
 	rHnd = GetStdHandle(STD_INPUT_HANDLE);
@@ -223,11 +313,13 @@ int main()
 	setcursor(0);
 	init_fish();
 	init_x2();
+	init_bet();
 	setMode();
 	while (play)
 	{
 		fish_move();
 		x2_move();
+		bet_move();
 		draw_score(90, 1, score);
 		draw_bait(90, 2, bait);
 		clear_buffer();
@@ -285,6 +377,21 @@ int main()
 					yh = 2;
 					dh = 0;
 				}
+				else if (cursor(xh, yh + 2) == '-' || cursor(xh, yh + 2) == 'B')
+				{
+					for (int i = 0; i < betcount; i++)
+					{
+						if ((xh == bet[i].x - 1 || xh == bet[i].x || xh == bet[i].x + 1 || xh == bet[i].x + 2 || xh == bet[i].x + 3) 
+							|| xh == bet[i].x + 4 || xh == bet[i].x + 5 || xh == bet[i].x + 6 || xh == bet[i].x + 7 || xh == bet[i].x + 8
+							&& yh + 2 == x2[i].y)
+						{
+							bet[i].active = false;
+						}
+					}
+					bait += 3;
+					yh = 2;
+					dh = 0;
+				}
 				else
 				{
 					draw_ship(x, y); draw_hook(xh, ++yh);
@@ -297,6 +404,8 @@ int main()
 		else { draw_ship(x, y); draw_hook(xh, yh); }
 		if (d == 0) { draw_ship(x, y); draw_hook(xh, yh); }
 		if (bait < 0) { play = false; }
+		fill_bet_to_buffer();
+		del_bet_to_buffer();
 		fill_x2_to_buffer();
 		del_x2_to_buffer();
 		fill_fish_to_buffer();
