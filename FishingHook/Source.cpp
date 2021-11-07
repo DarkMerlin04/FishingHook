@@ -4,11 +4,13 @@
 #include <time.h>
 #include <string.h>
 #define fishcount 20
+#define fishDeepcount 70
 #define x2count 5
-#define betcount 1
+#define betcount 3
+#define trashcount 70
 
 #define screen_x 90
-#define screen_y 30
+#define screen_y 35
 HANDLE wHnd;
 HANDLE rHnd;
 DWORD fdwMode;
@@ -25,6 +27,8 @@ struct ocean
 ocean fish[fishcount];
 ocean x2[x2count];
 ocean bet[betcount];
+ocean fishDeep[fishDeepcount];
+ocean trash[trashcount];
 char cursor(int x, int y)
 {
 	HANDLE hStd = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -93,8 +97,6 @@ void draw_hook(int x, int y)
 
 }
 
-
-
 void init_fish()
 {
 	for (int i = 0; i < fishcount; i++)
@@ -139,6 +141,65 @@ void del_fish_to_buffer()
 			consoleBuffer[(fish[i].x) + screen_x * fish[i].y].Attributes = 0;
 			consoleBuffer[(fish[i].x + 1) + screen_x * fish[i].y].Attributes = 0;
 			consoleBuffer[(fish[i].x + 2) + screen_x * fish[i].y].Attributes = 0;
+		}
+	}
+}
+
+void init_fishDeep()
+{
+	for (int i = 0; i < fishDeepcount; i++)
+	{
+		fishDeep[i].y = (rand() % screen_y) + 8;
+		fishDeep[i].x = rand() % screen_x;
+	}
+}
+void fishDeep_move()
+{
+	for (int i = 0; i < fishDeepcount; i++) {
+		if (fishDeep[i].x >= screen_x) {
+			fishDeep[i].y = ((rand() % screen_y) + 8);
+			fishDeep[i].x = 0;
+			fishDeep[i].active = true;
+		}
+		else {
+			fishDeep[i].x = fishDeep[i].x + 1;
+			fishDeep[i].y = fishDeep[i].y;
+		}
+	}
+}
+void fill_fishDeep_to_buffer()
+{
+	for (int i = 0; i < fishDeepcount; ++i) {
+		if (fishDeep[i].y > 25 && fishDeep[i].y < 35)
+		{
+			consoleBuffer[(fishDeep[i].x) + screen_x * fishDeep[i].y].Char.AsciiChar = '}';
+			consoleBuffer[(fishDeep[i].x + 1) + screen_x * fishDeep[i].y].Char.AsciiChar = '#';
+			consoleBuffer[(fishDeep[i].x + 2) + screen_x * fishDeep[i].y].Char.AsciiChar = '#';
+			consoleBuffer[(fishDeep[i].x + 3) + screen_x * fishDeep[i].y].Char.AsciiChar = ']';
+			consoleBuffer[(fishDeep[i].x) + screen_x * fishDeep[i].y].Attributes = 7;
+			consoleBuffer[(fishDeep[i].x + 1) + screen_x * fishDeep[i].y].Attributes = 7;
+			consoleBuffer[(fishDeep[i].x + 2) + screen_x * fishDeep[i].y].Attributes = 7;
+			consoleBuffer[(fishDeep[i].x + 3) + screen_x * fishDeep[i].y].Attributes = 7;
+		}
+		else
+		{
+			fishDeep[i].active = false;
+		}
+	}
+}
+void del_fishDeep_to_buffer()
+{
+	for (int i = 0; i < fishDeepcount; ++i) {
+		if (fishDeep[i].active == false)
+		{
+			consoleBuffer[(fishDeep[i].x) + screen_x * fishDeep[i].y].Char.AsciiChar = '}';
+			consoleBuffer[(fishDeep[i].x + 1) + screen_x * fishDeep[i].y].Char.AsciiChar = '#';
+			consoleBuffer[(fishDeep[i].x + 2) + screen_x * fishDeep[i].y].Char.AsciiChar = '#';
+			consoleBuffer[(fishDeep[i].x + 3) + screen_x * fishDeep[i].y].Char.AsciiChar = ']';
+			consoleBuffer[(fishDeep[i].x) + screen_x * fishDeep[i].y].Attributes = 0;
+			consoleBuffer[(fishDeep[i].x + 1) + screen_x * fishDeep[i].y].Attributes = 0;
+			consoleBuffer[(fishDeep[i].x + 2) + screen_x * fishDeep[i].y].Attributes = 0;
+			consoleBuffer[(fishDeep[i].x + 3) + screen_x * fishDeep[i].y].Attributes = 0;
 		}
 	}
 }
@@ -237,7 +298,6 @@ void fill_bet_to_buffer()
 		consoleBuffer[(bet[i].x + 8) + screen_x * bet[i].y].Attributes = 7;
 	}
 }
-
 void del_bet_to_buffer()
 {
 	for (int i = 0; i < betcount; ++i) {
@@ -270,6 +330,45 @@ void del_bet_to_buffer()
 	}
 }
 
+void init_trash()
+{
+	for (int i = 0; i < trashcount; i++)
+	{
+		trash[i].y = rand() % screen_y + 8;
+		trash[i].x = rand() % screen_x;
+	}
+}
+void trash_move()
+{
+	for (int i = 0; i < trashcount; i++) {
+		if (trash[i].x >= screen_x) {
+			trash[i].y = ((rand() % screen_y) + 8);
+			trash[i].x = 0;
+			trash[i].active = true;
+		}
+		else {
+			trash[i].x = trash[i].x + 1;
+			trash[i].y = trash[i].y;
+		}
+	}
+}
+void fill_trash_to_buffer()
+{
+	for (int i = 0; i < trashcount; ++i) {
+		consoleBuffer[(trash[i].x) + screen_x * trash[i].y].Char.AsciiChar = 'P';
+		consoleBuffer[(trash[i].x) + screen_x * trash[i].y].Attributes = 7;
+	}
+}
+void del_trash_to_buffer()
+{
+	for (int i = 0; i < trashcount; ++i) {
+		if (trash[i].active == false)
+		{
+			consoleBuffer[(trash[i].x) + screen_x * trash[i].y].Char.AsciiChar = 'P';
+			consoleBuffer[(trash[i].x) + screen_x * trash[i].y].Attributes = 0;
+		}
+	}
+}
 int setMode()
 {
 	rHnd = GetStdHandle(STD_INPUT_HANDLE);
@@ -290,7 +389,7 @@ void draw_score(int x, int y, int score)
 	COORD c = { x, y };
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
 	setcolor(7, 0);
-	printf("score : %d", score);
+	printf("score : %d ", score);
 }
 void draw_bait(int x, int y, int bait)
 {
@@ -311,15 +410,19 @@ int main()
 	DWORD numEvents = 0;
 	DWORD numEventsRead = 0;
 	setcursor(0);
+	setMode();
 	init_fish();
+	init_fishDeep();
 	init_x2();
 	init_bet();
-	setMode();
+	init_trash();
 	while (play)
 	{
 		fish_move();
+		fishDeep_move();
 		x2_move();
 		bet_move();
+		trash_move();
 		draw_score(90, 1, score);
 		draw_bait(90, 2, bait);
 		clear_buffer();
@@ -392,6 +495,33 @@ int main()
 					yh = 2;
 					dh = 0;
 				}
+				else if ((cursor(xh, yh + 2) == '}' || cursor(xh, yh + 2) == '#' || cursor(xh, yh + 2) == ']'))
+				{
+
+					for (int i = 0; i < fishDeepcount; i++)
+					{
+						if ((xh == fishDeep[i].x - 1 || xh == fishDeep[i].x || xh == fishDeep[i].x + 1 || xh == fishDeep[i].x + 2) && yh + 2 == fishDeep[i].y)
+						{
+							fishDeep[i].active = false;
+						}
+					}
+					score += 1;
+					yh = 2;
+					dh = 0;
+				}
+				else if (cursor(xh, yh + 2) == 'P')
+				{
+					for (int i = 0; i < trashcount; i++)
+					{
+						if (xh == trash[i].x || xh == trash[i].x - 1 && yh + 2 == trash[i].y)
+						{
+							trash[i].active = false;
+						}
+					}
+					score -= 1;
+					yh = 2;
+					dh = 0;
+				}
 				else
 				{
 					draw_ship(x, y); draw_hook(xh, ++yh);
@@ -404,12 +534,16 @@ int main()
 		else { draw_ship(x, y); draw_hook(xh, yh); }
 		if (d == 0) { draw_ship(x, y); draw_hook(xh, yh); }
 		if (bait < 0) { play = false; }
+		fill_trash_to_buffer();
+		del_trash_to_buffer();
 		fill_bet_to_buffer();
 		del_bet_to_buffer();
 		fill_x2_to_buffer();
 		del_x2_to_buffer();
 		fill_fish_to_buffer();
 		del_fish_to_buffer();
+		fill_fishDeep_to_buffer();
+		del_fishDeep_to_buffer();
 		fill_buffer_to_console();
 		Sleep(50);
 	}
