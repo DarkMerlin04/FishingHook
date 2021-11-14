@@ -3,8 +3,8 @@
 #include <windows.h>
 #include <time.h>
 #include <string.h>
-#define fishcount 20
-#define fishDeepcount 70
+#define fishcount 30
+#define fishDeepcount 40
 #define x2count 5
 #define betcount 3
 #define trashcount 70
@@ -125,9 +125,9 @@ void fill_fish_to_buffer()
 		consoleBuffer[(fish[i].x) + screen_x * fish[i].y].Char.AsciiChar = '>';
 		consoleBuffer[(fish[i].x + 1) + screen_x * fish[i].y].Char.AsciiChar = 'O';
 		consoleBuffer[(fish[i].x + 2) + screen_x * fish[i].y].Char.AsciiChar = 'D';
-		consoleBuffer[(fish[i].x) + screen_x * fish[i].y].Attributes = 7;
-		consoleBuffer[(fish[i].x + 1) + screen_x * fish[i].y].Attributes = 7;
-		consoleBuffer[(fish[i].x + 2) + screen_x * fish[i].y].Attributes = 7;
+		consoleBuffer[(fish[i].x) + screen_x * fish[i].y].Attributes = 0x0010;
+		consoleBuffer[(fish[i].x + 1) + screen_x * fish[i].y].Attributes = 0x0010;
+		consoleBuffer[(fish[i].x + 2) + screen_x * fish[i].y].Attributes = 0x0010;
 	}
 }
 void del_fish_to_buffer()
@@ -149,7 +149,7 @@ void init_fishDeep()
 {
 	for (int i = 0; i < fishDeepcount; i++)
 	{
-		fishDeep[i].y = (rand() % screen_y) + 8;
+		fishDeep[i].y = (rand() % 9) + 25;
 		fishDeep[i].x = rand() % screen_x;
 	}
 }
@@ -157,7 +157,7 @@ void fishDeep_move()
 {
 	for (int i = 0; i < fishDeepcount; i++) {
 		if (fishDeep[i].x >= screen_x) {
-			fishDeep[i].y = ((rand() % screen_y) + 8);
+			fishDeep[i].y = ((rand() % 9) + 25);
 			fishDeep[i].x = 0;
 			fishDeep[i].active = true;
 		}
@@ -176,10 +176,10 @@ void fill_fishDeep_to_buffer()
 			consoleBuffer[(fishDeep[i].x + 1) + screen_x * fishDeep[i].y].Char.AsciiChar = '#';
 			consoleBuffer[(fishDeep[i].x + 2) + screen_x * fishDeep[i].y].Char.AsciiChar = '#';
 			consoleBuffer[(fishDeep[i].x + 3) + screen_x * fishDeep[i].y].Char.AsciiChar = ']';
-			consoleBuffer[(fishDeep[i].x) + screen_x * fishDeep[i].y].Attributes = 7;
-			consoleBuffer[(fishDeep[i].x + 1) + screen_x * fishDeep[i].y].Attributes = 7;
-			consoleBuffer[(fishDeep[i].x + 2) + screen_x * fishDeep[i].y].Attributes = 7;
-			consoleBuffer[(fishDeep[i].x + 3) + screen_x * fishDeep[i].y].Attributes = 7;
+			consoleBuffer[(fishDeep[i].x) + screen_x * fishDeep[i].y].Attributes = 0x0010;
+			consoleBuffer[(fishDeep[i].x + 1) + screen_x * fishDeep[i].y].Attributes = 0x0010;
+			consoleBuffer[(fishDeep[i].x + 2) + screen_x * fishDeep[i].y].Attributes = 0x0010;
+			consoleBuffer[(fishDeep[i].x + 3) + screen_x * fishDeep[i].y].Attributes = 0x0010;
 		}
 		else
 		{
@@ -231,8 +231,8 @@ void fill_x2_to_buffer()
 	for (int i = 0; i < x2count; ++i) {
 		consoleBuffer[(x2[i].x) + screen_x * x2[i].y].Char.AsciiChar = 'x';
 		consoleBuffer[(x2[i].x + 1) + screen_x * x2[i].y].Char.AsciiChar = '2';
-		consoleBuffer[(x2[i].x) + screen_x * x2[i].y].Attributes = 7;
-		consoleBuffer[(x2[i].x + 1) + screen_x * x2[i].y].Attributes = 7;
+		consoleBuffer[(x2[i].x) + screen_x * x2[i].y].Attributes = 0x0020;
+		consoleBuffer[(x2[i].x + 1) + screen_x * x2[i].y].Attributes = 0x0020;
 	}
 }
 void del_x2_to_buffer()
@@ -285,17 +285,17 @@ void fill_bet_to_buffer()
 		consoleBuffer[(bet[i].x + 7) + screen_x * bet[i].y].Char.AsciiChar = '-';
 		consoleBuffer[(bet[i].x + 8) + screen_x * bet[i].y].Char.AsciiChar = 'B';
 
-		consoleBuffer[(bet[i].x) + screen_x * bet[i].y].Attributes = 7;
-		consoleBuffer[(bet[i].x + 1) + screen_x * bet[i].y].Attributes = 7;
-		consoleBuffer[(bet[i].x + 2) + screen_x * bet[i].y].Attributes = 7;
+		consoleBuffer[(bet[i].x) + screen_x * bet[i].y].Attributes = 0x0020;
+		consoleBuffer[(bet[i].x + 1) + screen_x * bet[i].y].Attributes = 0x0020;
+		consoleBuffer[(bet[i].x + 2) + screen_x * bet[i].y].Attributes = 0x0020;
 
-		consoleBuffer[(bet[i].x + 3) + screen_x * bet[i].y].Attributes = 7;
-		consoleBuffer[(bet[i].x + 4) + screen_x * bet[i].y].Attributes = 7;
-		consoleBuffer[(bet[i].x + 5) + screen_x * bet[i].y].Attributes = 7;
+		consoleBuffer[(bet[i].x + 3) + screen_x * bet[i].y].Attributes = 0x0020;
+		consoleBuffer[(bet[i].x + 4) + screen_x * bet[i].y].Attributes = 0x0020;
+		consoleBuffer[(bet[i].x + 5) + screen_x * bet[i].y].Attributes = 0x0020;
 
-		consoleBuffer[(bet[i].x + 6) + screen_x * bet[i].y].Attributes = 7;
-		consoleBuffer[(bet[i].x + 7) + screen_x * bet[i].y].Attributes = 7;
-		consoleBuffer[(bet[i].x + 8) + screen_x * bet[i].y].Attributes = 7;
+		consoleBuffer[(bet[i].x + 6) + screen_x * bet[i].y].Attributes = 0x0020;
+		consoleBuffer[(bet[i].x + 7) + screen_x * bet[i].y].Attributes = 0x0020;
+		consoleBuffer[(bet[i].x + 8) + screen_x * bet[i].y].Attributes = 0x0020;
 	}
 }
 void del_bet_to_buffer()
@@ -356,7 +356,7 @@ void fill_trash_to_buffer()
 {
 	for (int i = 0; i < trashcount; ++i) {
 		consoleBuffer[(trash[i].x) + screen_x * trash[i].y].Char.AsciiChar = 'P';
-		consoleBuffer[(trash[i].x) + screen_x * trash[i].y].Attributes = 7;
+		consoleBuffer[(trash[i].x) + screen_x * trash[i].y].Attributes = 0x0040;
 	}
 }
 void del_trash_to_buffer()
