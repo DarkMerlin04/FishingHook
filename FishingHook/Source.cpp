@@ -634,13 +634,13 @@ void menu()
 		printf("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
 		setcolor(1, 0);
-		gotoxy(45, 3);
+		gotoxy(43, 3);
 		printf("Fishing Hook");
 
 		setcolor(2, 0);
-		gotoxy(45, 6);
+		gotoxy(43, 6);
 		printf("W");
-		gotoxy(45, 14);
+		gotoxy(43, 14);
 		printf("S");
 
 		setcolor(7, 0);
@@ -650,6 +650,10 @@ void menu()
 		printf("Score");
 		gotoxy(42, 12);
 		printf("Exit");
+
+		setcolor(7, 0);
+		gotoxy(40, 19);
+		printf("64010718 RAWEEROJ THOKAEO");
 
 		setcolor(3, 0);
 		gotoxy(10, 17);
