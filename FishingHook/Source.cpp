@@ -634,8 +634,14 @@ void menu()
 		printf("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
 		setcolor(1, 0);
-		gotoxy(50, 5);
+		gotoxy(45, 3);
 		printf("Fishing Hook");
+
+		setcolor(2, 0);
+		gotoxy(45, 6);
+		printf("W");
+		gotoxy(45, 14);
+		printf("S");
 
 		setcolor(7, 0);
 		gotoxy(42, 8);
